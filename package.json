@@ -1,6 +1,6 @@
 {
-  "name": "coinspricetracker",
-  "version": "1.0.0",
+  "name": "coinstracker",
+  "version": "1.0.1",
   "main": "expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
@@ -29,6 +29,7 @@
     "react-native-svg": "^15.2.0",
     "react-native-swipe-list-view": "^3.2.9",
     "react-native-wagmi-charts": "^2.5.3",
+    "react-native-webview": "13.8.6",
     "recoil": "^0.7.7"
   },
   "devDependencies": {

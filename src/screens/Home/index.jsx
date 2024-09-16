@@ -12,6 +12,7 @@ export default function HomeScreen() {
     }
     setIsLoading(true);
     const coinsData = await getMarketData(page);
+    if(!coinsData) return;
     setCoins((prevCoins) => [...prevCoins, ...coinsData]);
     setIsLoading(false);
   };

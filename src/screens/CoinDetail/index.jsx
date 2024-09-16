@@ -24,10 +24,12 @@ import {
 } from "./../../services/requests";
 import Filter from "../../components/CoinDetail/Filter";
 
+import TradingWidget from "../../components/TradingWidget";
+
 const filterDaysArray = [
   { filterDay: "1", filterText: "24h" },
   { filterDay: "7", filterText: "7d" },
-  { filterDay: "30", filterText: "30d" },
+  { filterDay: "30", filterText: "1m" },
   { filterDay: "180", filterText: "6m" },
   { filterDay: "365", filterText: "1y" },
   // { filterDay: "1825", filterText: "5y" },
@@ -39,6 +41,11 @@ export default function CoinDetail() {
   const [usdValue, setUsdValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [selectedRange, setSelectedRange] = useState("1");
+  const [priceDetails, setPriceDetails] = useState({
+    min: 0,
+    average: 0,
+    max: 0
+  });
   const route = useRoute();
   const {
     params: { coinId },
@@ -58,6 +65,21 @@ export default function CoinDetail() {
       selectedRangeValue
     );
     setCoinMarketData(fetchedCoinMarketData);
+    if(!fetchedCoinMarketData) return;
+    const secondValues = fetchedCoinMarketData.prices.map(subArray => subArray[1]);
+    const tempMax = Math.max(...secondValues);
+    const tempMin = Math.min(...secondValues);
+    
+    // Step 2: Calculate the sum of the second values
+    const sum = secondValues.reduce((acc, value) => acc + value, 0);
+
+    // Step 3: Calculate the average
+    const tempAverage = sum / secondValues.length;
+
+    const average = parseFloat(tempAverage.toFixed(2));
+    const max = parseFloat(tempMax.toFixed(2));
+    const min = parseFloat(tempMin.toFixed(2));
+    setPriceDetails({min, max, average});
   };
 
   useEffect(() => {
@@ -112,7 +134,11 @@ export default function CoinDetail() {
       keyboardVerticalOffset={80}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <Text>Hi</Text>
+      {/* <TradingWidget />
+      <Text>12121</Text>
+      <Text>12121</Text>
+      <Text>12121</Text>
+      <Text>12121</Text> */}
       {/* <ChartPathProvider
         data={{
           // points: prices.map((price) => ({ x: price[0], y: price[1] })),
@@ -156,26 +182,37 @@ export default function CoinDetail() {
         {/* CHART COMPONENT END */}
         {/* PRICE CONVERTER CONTAINER START */}
         <View style={styles.priceConverterContainer}>
-          <Text style={styles.priceConverterTitle}>Price Converter</Text>
-          <View style={{ flexDirection: "row", marginHorizontal: 10 }}>
+          <Text style={styles.priceConverterTitle}>Price Details ($)</Text>
+          <View style={{ flexDirection: "colume", marginHorizontal: 10 }}>
             {/* importante agregar el flex 1 tanto aca como en el text input para que en todas las pantallas se vea bien el width del border */}
-            <View style={{ flexDirection: "row", flex: 1 }}>
+            <View style={{ flexDirection: "row", flex: 0 }}>
               <Text style={{ color: "white", alignSelf: "center" }}>
-                {symbol.toUpperCase()}
+                {/* {symbol.toUpperCase()} */}
+                MIN
               </Text>
               <TextInput
                 style={styles.input}
-                value={coinValue.toString()}
+                value={priceDetails.min.toString()}
                 keyboardType="numeric"
                 // onChangeText={setCoinValue}
                 onChangeText={handleChangeCoinValue}
               />
             </View>
-            <View style={{ flexDirection: "row", flex: 1 }}>
-              <Text style={{ color: "white", alignSelf: "center" }}>USD</Text>
+            <View style={{ flexDirection: "row", flex: 0 }}>
+              <Text style={{ color: "white", alignSelf: "center" }}>Average</Text>
               <TextInput
                 style={styles.input}
-                value={usdValue.toString()}
+                value={priceDetails.average.toString()}
+                keyboardType="numeric"
+                // onChangeText={setUsdValue}
+                onChangeText={handleChangeUsdValue}
+              />
+            </View>
+            <View style={{ flexDirection: "row", flex: 0}}>
+              <Text style={{ color: "white", alignSelf: "center" }}>MAX</Text>
+              <TextInput
+                style={styles.input}
+                value={priceDetails.max.toString()}
                 keyboardType="numeric"
                 // onChangeText={setUsdValue}
                 onChangeText={handleChangeUsdValue}
